@@ -13,23 +13,34 @@ class Item {
 class Wallet {
   List<Item> _itemsList = [];
   String _baseCurrency = 'GBP';
-
+  Item _currentItem;
   // Constructor
   Wallet(this._itemsList, this._baseCurrency);
 
-  // methods
   // getters and setters
+  // items list
   List<Item> get itemsList{
     return _itemsList;
   }
-
+  set itemsList(List<Item> itemsList){
+    _itemsList = itemsList;
+  }
+  // base currency
   String get baseCurrency{
     return _baseCurrency;
   }
   set baseCurrency(String currency){
     this._baseCurrency = currency;
   }
+  // current element
+  Item get currentItem{
+    return _currentItem;
+  }
+  setCurrentItem(Item item){
+    _currentItem = item;
+  }
 
+  // class methods
   //  add item to items array
   Item addItem(String currency, double amount){
     int id;
@@ -59,16 +70,37 @@ class Wallet {
     _itemsList.removeAt(index);
    }
 
-  // TODO: update item
+  // update item
+  Item updateItem(String currency, double amount) {
+    Item found;
 
-// TODO: get data item by id
+    for (var item in _itemsList) {
+      if (item.id == _currentItem.id) {
+        item.currency = currency;
+        item.amount = amount;
+        found = item;
+      }
+      return found;
+    }
+  }
+    // get data item by id
+    Item getItemById(int id) {
+      Item found;
 
+      // loop trough items
+      _itemsList.forEach((item) =>
+      {
+        if (item.id == id){
+          found = item
+        }
+      });
+      return found;
+    }
 
 // TODO: clear all data items
 
 }
 
-Item _currentItem;
 
 //var _baseCurrency=  'GBP'; // init with GBP as default; TODO: get base
 ////currency from local storage on load
@@ -125,6 +157,7 @@ String getCurrencyFullName(String currencyAbrr){
   _currenciesList.forEach((k,v) => {
     if (k == currencyAbrr){currencyFullName = v}
   });
+
   return currencyFullName;
 }
 

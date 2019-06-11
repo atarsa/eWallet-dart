@@ -99,12 +99,31 @@ void updateListItemUI(Item item, Wallet wallet){
   // TODO: update total money
   // updateTotalMoney();
 }
+
 void deleteListItemUI(String id){
   (querySelector('[data-id="$id"]') as HtmlElement).remove();
   // TODO: update total money
   // updateTotalMoney();
   // TODO: checkForItems();
 }
+
+// add edited item to form
+void addToForm(Item editedItem){
+  String currencyFullName = getCurrencyFullName(editedItem.currency);
+
+  final currencyInput = (querySelector(_UISelectors["itemCurrencyInput"]) as
+  InputElement);
+  currencyInput.value = "${editedItem.currency} $currencyFullName";
+  // disable currency input to prevent multiple
+  // same currencies in (currency) list items
+  currencyInput.disabled = true;
+  (querySelector(_UISelectors["itemAmountInput"]) as InputElement).value =
+      editedItem.amount.toString();
+
+  // TODO: set edit state
+  // setEditState();
+}
+
 // show list of available currencies on user input change
 void showCurrencyList(Event e){
   Map<String, String> availableCurrency = getCurrencyList();
@@ -140,6 +159,7 @@ void showCurrencyList(Event e){
   // update currency list inner html
   currencyList.innerHtml = ulHTML;
 }
+
 // clear user input
 void clearUserInput(){
   (querySelector(_UISelectors["itemCurrencyInput"]) as InputElement).value = '';

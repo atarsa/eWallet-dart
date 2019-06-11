@@ -25,10 +25,6 @@ void loadEventListeners(Wallet wallet) {
   querySelector(UISelectors["addBtn"]).onClick.listen((Event e)
   => addItemSubmit(e, wallet));
 
-  // update item submit event
-  querySelector(UISelectors["updateBtn"]).onClick.listen((Event e)
-  => updateItemSubmit(e, wallet));
-
   // delete item submit event
   querySelector(UISelectors["itemsList"]).onClick.listen((Event e)
   => deleteItemSubmit(e, wallet));
@@ -37,9 +33,13 @@ void loadEventListeners(Wallet wallet) {
   querySelector(UISelectors["itemsList"]).onClick.listen((Event e)
   => editItemClick(e, wallet));
 
+  // update item submit event
+  querySelector(UISelectors["updateBtn"]).onClick.listen((Event e)
+  => updateItemSubmit(e, wallet));
+
 }
 
-addItemSubmit(Event e, Wallet wallet){
+void addItemSubmit(Event e, Wallet wallet){
   // get user input
   List input = getItemInput();
   String currency = input[0];
@@ -101,18 +101,42 @@ void deleteItemSubmit(Event e, Wallet w){
 
       // remove item from items list UI
       deleteListItemUI(elemId.toString());
-
       // TODO: check if any items left
     }
   }
 }
 
 void editItemClick(Event e, Wallet w){
+  final elem = e.target as HtmlElement;
 
+  if (elem.classes.contains('edit-item')) {
+    // get item id
+    int elemId = num.parse(elem.parent.parent.getAttribute('data-id'));
+    // get item
+    Item editedItem = w.getItemById(elemId);
+    // set item as a current item
+    w.setCurrentItem(editedItem);
+    // update form with edited item
+    addToForm(editedItem);
+  }
 }
 
 void updateItemSubmit(Event e, Wallet w) {
+  print("updating");
+  List item = getItemInput(); // item[0] => currency,item[1] => amount
+  // get only abbreviation from currency input
+  String currency = item[0].split(" ")[0];
+  double amount = num.parse(item[1]);
 
+  // update current item
+  Item updatedItem = w.updateItem(currency, amount);
+  print(updatedItem);
+  // TODO: update local storage
+
+  // update UI
+  updateListItemUI(updatedItem, w);
+  clearUserInput();
+  //setDefaultState();
 }
 void getCurrencyInput(Event e, Wallet w){
   // get targeted element and currency list
