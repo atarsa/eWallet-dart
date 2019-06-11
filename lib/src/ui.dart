@@ -99,6 +99,12 @@ void updateListItemUI(Item item, Wallet wallet){
   // TODO: update total money
   // updateTotalMoney();
 }
+void deleteListItemUI(String id){
+  (querySelector('[data-id="$id"]') as HtmlElement).remove();
+  // TODO: update total money
+  // updateTotalMoney();
+  // TODO: checkForItems();
+}
 // show list of available currencies on user input change
 void showCurrencyList(Event e){
   Map<String, String> availableCurrency = getCurrencyList();

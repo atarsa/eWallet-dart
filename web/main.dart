@@ -21,9 +21,22 @@ void loadEventListeners(Wallet wallet) {
   querySelectorAll(UISelectors["currencyList"]).onClick.listen
    ((Event e) => getCurrencyInput(e, wallet));
 
-  // add item event
+  // add item submit event
   querySelector(UISelectors["addBtn"]).onClick.listen((Event e)
   => addItemSubmit(e, wallet));
+
+  // update item submit event
+  querySelector(UISelectors["updateBtn"]).onClick.listen((Event e)
+  => updateItemSubmit(e, wallet));
+
+  // delete item submit event
+  querySelector(UISelectors["itemsList"]).onClick.listen((Event e)
+  => deleteItemSubmit(e, wallet));
+
+  // edit item click event
+  querySelector(UISelectors["itemsList"]).onClick.listen((Event e)
+  => editItemClick(e, wallet));
+
 }
 
 addItemSubmit(Event e, Wallet wallet){
@@ -65,13 +78,9 @@ addItemSubmit(Event e, Wallet wallet){
           Item newItem = wallet.addItem(currency, amount);
           addListItemUI(newItem, wallet);
         }
-
       }
-
       clearUserInput();
-
     }
-
   } else {
     // TODO: show message that no input
     // showAlert("Please fill the form");
@@ -79,7 +88,33 @@ addItemSubmit(Event e, Wallet wallet){
   e.preventDefault();
 }
 
-void getCurrencyInput(Event e, Wallet wallet){
+void deleteItemSubmit(Event e, Wallet w){
+  final elem = e.target as HtmlElement;
+  if (elem.classes.contains('delete-item')){
+    // get item id
+    int elemId = num.parse(elem.parent.parent.getAttribute('data-id'));
+
+    if (window.confirm("Are you sure?")){
+      // remove item from wallet's items list
+      w.deleteItem(elemId);
+      // TODO: remove item from local storage
+
+      // remove item from items list UI
+      deleteListItemUI(elemId.toString());
+
+      // TODO: check if any items left
+    }
+  }
+}
+
+void editItemClick(Event e, Wallet w){
+
+}
+
+void updateItemSubmit(Event e, Wallet w) {
+
+}
+void getCurrencyInput(Event e, Wallet w){
   // get targeted element and currency list
   var targetedElem = (e.target as HtmlElement);
   //print(targetedElem);
@@ -103,7 +138,7 @@ void getCurrencyInput(Event e, Wallet wallet){
           (UISelectors["baseCurrencyInput"]) as InputElement;
         baseCurrencyInput.value = targetedElem.text;
         // update base currency in wallet with currency abbreviation only
-        wallet.baseCurrency = targetedElem.text.split(" ")[0];
+        w.baseCurrency = targetedElem.text.split(" ")[0];
       } else {
         // set item currency user input
         final itemCurrencyInput = querySelector
@@ -117,10 +152,14 @@ void getCurrencyInput(Event e, Wallet wallet){
 }
 
 void main() {
-
   // initialise wallet
   Wallet wallet = Wallet([], "GBP");
   // default with GBP; TODO: get it from local storage
+  // set default base currency input on page load
+  String baseCurrency = wallet.baseCurrency;
+  String currencyFullName = getCurrencyFullName(baseCurrency);
+  (querySelector(UISelectors["baseCurrencyInput"]) as InputElement).value =
+      "$baseCurrency $currencyFullName";
 
   loadEventListeners(wallet);
 

@@ -15,7 +15,7 @@ class Wallet {
   String _baseCurrency = 'GBP';
 
   // Constructor
-Wallet(this._itemsList, this._baseCurrency);
+  Wallet(this._itemsList, this._baseCurrency);
 
   // methods
   // getters and setters
@@ -49,8 +49,24 @@ Wallet(this._itemsList, this._baseCurrency);
     return newItem;
   }
 
-}
+  //  delete item from items array
+  void deleteItem(int id){
+    // get all ids
+    List ids = _itemsList.map((item) => item.id).toList();
+    // get the index of id
+    final index = ids.indexOf(id);
+    // remove item from list
+    _itemsList.removeAt(index);
+   }
 
+  // TODO: update item
+
+// TODO: get data item by id
+
+
+// TODO: clear all data items
+
+}
 
 Item _currentItem;
 
@@ -98,26 +114,27 @@ Map<String, String> _currenciesList = {'EUR': 'Euro',
 'ZAR': 	'South African rand'};
 
 // Public methods
+Map<String,String> getCurrencyList(){
+  return _currenciesList;
+}
 
-
-// TODO: delete item
-
-// TODO: update item
-
-// TODO: get data item by id
-
+String getCurrencyFullName(String currencyAbrr){
+  // iterate through available currencies
+  // to get full currency name
+  String currencyFullName = '';
+  _currenciesList.forEach((k,v) => {
+    if (k == currencyAbrr){currencyFullName = v}
+  });
+  return currencyFullName;
+}
 
 // TODO: clear all data items
 
 
 // TODO: set current item
-
 // TODO: get current item
 
-// TODO: set base currency
 
-// TODO: get base currency
-// TODO:  get available currencies
 // TODO: fetch currencies rates
 // TODO: get exchange rates
 // TODO:  set exchange rate
