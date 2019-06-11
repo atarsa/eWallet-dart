@@ -4,19 +4,82 @@ import 'package:e_wallet/src/ui.dart';
 
 final UISelectors = getUISelectors();
 
-// passing wallet as needed to update base currency on user input
-void loadEventListeners(Wallet wallet){
+// passing wallet as a parameter to have access to wallet's data items
+void loadEventListeners(Wallet wallet) {
+  // disable form submit on enter
+  querySelector("body").onKeyUp.listen((KeyboardEvent e) {
+    if (e.keyCode == KeyCode.ENTER) {
+      e.preventDefault();
+    }
+  });
 
-   // Listen for key up in currency input
-   querySelectorAll(UISelectors["currencyInput"])
+  //  key up in currency input
+  querySelectorAll(UISelectors["currencyInput"])
      .onKeyUp.listen(showCurrencyList);
    
-   // Listen for click on currency list item
+   //  click on currency list item
   querySelectorAll(UISelectors["currencyList"]).onClick.listen
-   ((e) => getCurrencyInput(e, wallet));
+   ((Event e) => getCurrencyInput(e, wallet));
+
+  // add item event
+  querySelector(UISelectors["addBtn"]).onClick.listen((Event e)
+  => addItemSubmit(e, wallet));
 }
 
- getCurrencyInput(Event e, Wallet wallet){
+addItemSubmit(Event e, Wallet wallet){
+  // get user input
+  List input = getItemInput();
+  String currency = input[0];
+  double amount = num.parse(input[1]);
+
+  // check for currency and amount input
+  if(currency != '' && amount != null){
+    // check if number is positive
+    if (amount < 0){
+      // TODO: show alert
+      // showAlert("Amount must be positive");
+    } else {
+      // get currency abbreviation
+      currency = currency.split(" ")[0];
+
+      // check if currency already in items list
+      // -> if yes update it instead of creating new item
+      final dataItems = wallet.itemsList;
+
+      // if items list empty than add new item
+      if (dataItems.isEmpty){
+        Item newItem = wallet.addItem(currency, amount);
+        // update UI
+        addListItemUI(newItem, wallet);
+      } else {
+        // check if currency already on the list
+       Item found = dataItems.singleWhere( (item) => item.currency ==
+           currency, orElse: () => null);
+
+        // update list item
+        if (found != null){
+          found.amount += amount;
+          updateListItemUI(found, wallet);
+        } else {
+          // add new item to the list
+          Item newItem = wallet.addItem(currency, amount);
+          addListItemUI(newItem, wallet);
+        }
+
+      }
+
+      clearUserInput();
+
+    }
+
+  } else {
+    // TODO: show message that no input
+    // showAlert("Please fill the form");
+  }
+  e.preventDefault();
+}
+
+void getCurrencyInput(Event e, Wallet wallet){
   // get targeted element and currency list
   var targetedElem = (e.target as HtmlElement);
   //print(targetedElem);
@@ -57,6 +120,7 @@ void main() {
 
   // initialise wallet
   Wallet wallet = Wallet([], "GBP");
+  // default with GBP; TODO: get it from local storage
 
   loadEventListeners(wallet);
 

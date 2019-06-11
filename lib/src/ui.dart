@@ -1,6 +1,7 @@
 import 'dart:html';
 import 'package:e_wallet/src/item.dart';
-// UI Selectors
+
+// define UI Selectors
 final _UISelectors = {
   'itemCurrencyInput': '#item-currency',
   'baseCurrencyInput': '#base-currency',
@@ -21,6 +22,83 @@ final _UISelectors = {
   'backBtn': '.back-btn',
   'clearBtn': '.clear-btn'
 };
+
+// get UI Selectors
+Map<String, String> getUISelectors(){
+  return _UISelectors;
+}
+
+// get user input from item form
+List getItemInput(){
+  String currency = (querySelector(_UISelectors["itemCurrencyInput"]) as
+  InputElement).value;
+  
+  String amount = (querySelector(_UISelectors["itemAmountInput"])
+  as InputElement).value;
+
+  return [currency, amount];
+}
+
+// add new item to existing list (UI)
+void addListItemUI(Item listItem, Wallet wallet){
+  // TODO: get base currency and exchange money
+  String baseCurrency = wallet.baseCurrency;
+  var convertedAmount;
+  // Create list element
+  var li = LIElement();
+  // add class and data attribute
+  li.className = 'collection-item';
+  li.setAttribute('data-id', listItem.id.toString());
+
+  // add html
+  li.innerHtml = '''
+        <a href="#" class="delete">
+          <i class="delete-item fas fa-trash-alt"></i>
+        </a>
+        <a href="#" class="update">
+          <i class="edit-item fas fa-edit"></i>
+        </a>
+        
+        <span class="amount">${listItem.amount}</span>
+        <span class="currency">${listItem.currency}</span>
+       
+        <span class="secondary-content">
+          <span class="converted-amount">${convertedAmount}</span>
+          <span class="base-currency">${baseCurrency}</span>
+        </span>
+  ''';
+  // Insert element
+  querySelector(_UISelectors["itemsList"]).insertAdjacentElement('beforeend',
+      li);
+
+  // TODO: updateTotalMoney();
+  // check if items list previously empty
+  // TODO: checkForItems();
+}
+
+void updateListItemUI(Item item, Wallet wallet){
+  // TODO: get base currency and exchange money
+  String baseCurrency = wallet.baseCurrency;
+  var convertedAmount;
+
+  (querySelector("[data-id='${item.id}']") as HtmlElement).innerHtml = '''
+    <a href="#" class="delete">
+        <i class="delete-item fas fa-trash-alt"></i>
+      </a>
+      <a href="#" class="update">
+        <i class="edit-item fas fa-edit"></i>
+      </a>
+      <span class="amount">${item.amount}</span>
+      <span class="currency">${item.currency}</span>
+      
+      <span class="secondary-content">
+        <span class="converted-amount">${convertedAmount}</span>
+        <span class="base-currency">${baseCurrency}</span>
+      </span>
+   ''';
+  // TODO: update total money
+  // updateTotalMoney();
+}
 // show list of available currencies on user input change
 void showCurrencyList(Event e){
   Map<String, String> availableCurrency = getCurrencyList();
@@ -55,10 +133,9 @@ void showCurrencyList(Event e){
   }
   // update currency list inner html
   currencyList.innerHtml = ulHTML;
-
-
 }
-
-getUISelectors(){
-  return _UISelectors;
+// clear user input
+void clearUserInput(){
+  (querySelector(_UISelectors["itemCurrencyInput"]) as InputElement).value = '';
+  (querySelector(_UISelectors["itemAmountInput"]) as InputElement).value = '';
 }
