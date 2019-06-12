@@ -41,11 +41,12 @@ List getItemInput(){
 
 // add new item to existing list (UI)
 void addListItemUI(Item listItem, Wallet wallet){
-  // TODO: get base currency and exchange money
+  // get base currency, and exchange money
   String baseCurrency = wallet.baseCurrency;
-  var convertedAmount;
+  String convertedAmount = exchangeMoney(listItem.currency, listItem.amount);
+
   // Create list element
-  var li = LIElement();
+  final li = LIElement();
   // add class and data attribute
   li.className = 'collection-item';
   li.setAttribute('data-id', listItem.id.toString());
@@ -63,8 +64,8 @@ void addListItemUI(Item listItem, Wallet wallet){
         <span class="currency">${listItem.currency}</span>
        
         <span class="secondary-content">
-          <span class="converted-amount">${convertedAmount}</span>
-          <span class="base-currency">${baseCurrency}</span>
+          <span class="converted-amount">$convertedAmount</span>
+          <span class="base-currency">$baseCurrency</span>
         </span>
   ''';
   // Insert element
@@ -77,9 +78,9 @@ void addListItemUI(Item listItem, Wallet wallet){
 }
 
 void updateListItemUI(Item item, Wallet wallet){
-  // TODO: get base currency and exchange money
+  // get base currency and exchange money
   String baseCurrency = wallet.baseCurrency;
-  var convertedAmount;
+  String convertedAmount = exchangeMoney(item.currency, item.amount);
 
   (querySelector("[data-id='${item.id}']") as HtmlElement).innerHtml = '''
     <a href="#" class="delete">
@@ -92,8 +93,8 @@ void updateListItemUI(Item item, Wallet wallet){
       <span class="currency">${item.currency}</span>
       
       <span class="secondary-content">
-        <span class="converted-amount">${convertedAmount}</span>
-        <span class="base-currency">${baseCurrency}</span>
+        <span class="converted-amount">$convertedAmount</span>
+        <span class="base-currency">$baseCurrency</span>
       </span>
    ''';
   // TODO: update total money

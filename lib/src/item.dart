@@ -1,3 +1,6 @@
+import 'dart:html';
+import 'dart:convert';
+
 class Item {
   int id;
   String currency;
@@ -80,14 +83,14 @@ class Wallet {
         item.amount = amount;
         found = item;
       }
-      return found;
     }
+    return found;
   }
     // get data item by id
     Item getItemById(int id) {
       Item found;
 
-      // loop trough items
+      // loop trough items TODO: for loop instead of forEach?
       _itemsList.forEach((item) =>
       {
         if (item.id == id){
@@ -97,14 +100,11 @@ class Wallet {
       return found;
     }
 
-// TODO: clear all data items
+  // TODO: clear all data items
 
 }
-
-
-//var _baseCurrency=  'GBP'; // init with GBP as default; TODO: get base
-////currency from local storage on load
-Map<String, double> _exchangeRates = {};
+// Initialise empty object for exchange rates
+Map<String, dynamic> _exchangeRates = {};
 
 // Available currencies
 /* list compatible with https://exchangeratesapi.io/
@@ -160,15 +160,40 @@ String getCurrencyFullName(String currencyAbrr){
 
   return currencyFullName;
 }
+// get exchange rates
+Map<String,num> getExchangeRates(){
+    return _exchangeRates;
+  }
+// set exchange rate
+setExchangeRates(Map<String,num> rates){
+  _exchangeRates = rates;
+}
 
-// TODO: clear all data items
+//  fetch currencies exchange rates
+ void fetchCurrencyExchangeRates (String baseCurrency) async{
+  String url = 'https://api.exchangeratesapi.io/latest?base=$baseCurrency';
 
+  var exchangeRates = {};
 
-// TODO: set current item
-// TODO: get current item
+  var dataString = await HttpRequest.getString(url);
+  // convert string to Json
+  var dataJson = jsonDecode(dataString);
+  // get exchange rates
+  exchangeRates = (dataJson["rates"] as Map).cast<String, num>();
+  setExchangeRates(exchangeRates);
+}
 
+String exchangeMoney(String currency, double amount){
+  double money = 0;
+  //var exchangeRates = Map.from(_exchangeRates);
+  // get exchange rate for given currency
+  for (var key in _exchangeRates.keys){
+    if (key == currency){
+      final value = _exchangeRates[currency];
+      money = (amount / value).floorToDouble();
+    }
 
-// TODO: fetch currencies rates
-// TODO: get exchange rates
-// TODO:  set exchange rate
-// TODO: exchange money
+  }
+  return money.toStringAsFixed(2);
+}
+
