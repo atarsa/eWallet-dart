@@ -72,7 +72,6 @@ void addListItemUI(Item listItem, Wallet wallet){
   querySelector(_UISelectors["itemsList"]).insertAdjacentElement('beforeend',
       li);
 
-  // TODO: updateTotalMoney();
   // check if items list previously empty
   checkForListItems();
 }
@@ -97,14 +96,28 @@ void updateListItemUI(Item item, Wallet wallet){
         <span class="base-currency">$baseCurrency</span>
       </span>
    ''';
-  // TODO: update total money
-  // updateTotalMoney();
+}
+
+void updateTotalMoneyUI(String baseCurrency){
+  // get exchanged amount from each item list and calculate total money
+  double total = 0;
+
+  final convertedAmounts = querySelectorAll
+    (_UISelectors["convertedAmount"]);
+  for (var element in convertedAmounts){
+    element = (element as HtmlElement);
+    double amount = num.parse(element.text);
+    total += amount;
+  }
+  // update UI
+  (querySelector(_UISelectors["totalAmount"]) as HtmlElement).text = total
+      .toStringAsFixed(2);
+  (querySelector(_UISelectors["totalCurrency"]) as HtmlElement).text =
+      baseCurrency;
 }
 
 void deleteListItemUI(String id){
   (querySelector('[data-id="$id"]') as HtmlElement).remove();
-  // TODO: update total money
-  // updateTotalMoney();
   // check if any list item left
   checkForListItems();
 }

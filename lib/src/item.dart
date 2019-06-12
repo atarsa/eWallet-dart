@@ -190,9 +190,8 @@ String exchangeMoney(String currency, double amount){
   for (var key in _exchangeRates.keys){
     if (key == currency){
       final value = _exchangeRates[currency];
-      money = (amount / value).floorToDouble();
+      money = (amount / value);
     }
-
   }
   return money.toStringAsFixed(2);
 }

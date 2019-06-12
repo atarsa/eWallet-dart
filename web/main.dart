@@ -83,6 +83,7 @@ void addItemSubmit(Event e, Wallet wallet){
           addListItemUI(newItem, wallet);
         }
       }
+      updateTotalMoneyUI(wallet.baseCurrency);
       clearUserInput();
     }
   } else {
@@ -105,6 +106,8 @@ void deleteItemSubmit(Event e, Wallet w){
 
       // remove item from items list UI
       deleteListItemUI(elemId.toString());
+      // update total money
+      updateTotalMoneyUI(w.baseCurrency);
     }
   }
 }
@@ -125,7 +128,7 @@ void editItemClick(Event e, Wallet w){
 }
 
 void updateItemSubmit(Event e, Wallet w) {
-  print("updating");
+
   List item = getItemInput(); // item[0] => currency,item[1] => amount
   // get only abbreviation from currency input
   String currency = item[0].split(" ")[0];
@@ -133,11 +136,12 @@ void updateItemSubmit(Event e, Wallet w) {
 
   // update current item
   Item updatedItem = w.updateItem(currency, amount);
-  print(updatedItem);
+
   // TODO: update local storage
 
   // update UI
   updateListItemUI(updatedItem, w);
+  updateTotalMoneyUI(w.baseCurrency);
   clearUserInput();
   setDefaultState();
 }
@@ -188,7 +192,14 @@ void main() {
   (querySelector(UISelectors["baseCurrencyInput"]) as InputElement).value =
       "$baseCurrency $currencyFullName";
 
+  // fetch current exchange currency rates
+  fetchCurrencyExchangeRates(baseCurrency);
+  //
   setDefaultState();
+  // TODO: get list items from local storage
+  // TODO: populate items list UI
+  // update total converted money
+  //updateTotalMoneyUI(baseCurrency);
   checkForListItems();
   loadEventListeners(wallet);
 
