@@ -73,7 +73,7 @@ void addListItemUI(Item listItem, Wallet wallet){
 
   // TODO: updateTotalMoney();
   // check if items list previously empty
-  // TODO: checkForItems();
+  checkForListItems();
 }
 
 void updateListItemUI(Item item, Wallet wallet){
@@ -104,7 +104,8 @@ void deleteListItemUI(String id){
   (querySelector('[data-id="$id"]') as HtmlElement).remove();
   // TODO: update total money
   // updateTotalMoney();
-  // TODO: checkForItems();
+  // check if any list item left
+  checkForListItems();
 }
 
 // add edited item to form
@@ -120,8 +121,7 @@ void addToForm(Item editedItem){
   (querySelector(_UISelectors["itemAmountInput"]) as InputElement).value =
       editedItem.amount.toString();
 
-  // TODO: set edit state
-  // setEditState();
+  setEditState();
 }
 
 // show list of available currencies on user input change
@@ -164,4 +164,39 @@ void showCurrencyList(Event e){
 void clearUserInput(){
   (querySelector(_UISelectors["itemCurrencyInput"]) as InputElement).value = '';
   (querySelector(_UISelectors["itemAmountInput"]) as InputElement).value = '';
+}
+
+// set default state
+void setDefaultState(){
+  (querySelector(_UISelectors["itemCurrencyInput"]) as InputElement).disabled
+  = false;
+  clearUserInput();
+
+  (querySelector(_UISelectors["addBtn"]) as HtmlElement).style.display =
+  "inline";
+  (querySelector(_UISelectors["updateBtn"]) as HtmlElement).style.display =
+  "none";
+  (querySelector(_UISelectors["backBtn"]) as HtmlElement).style.display =
+  "none";
+}
+
+// set edit state
+void setEditState(){
+  (querySelector(_UISelectors["addBtn"]) as HtmlElement).style.display =
+  "none";
+  (querySelector(_UISelectors["updateBtn"]) as HtmlElement).style.display =
+  "inline";
+  (querySelector(_UISelectors["backBtn"]) as HtmlElement).style.display =
+  "inline";
+}
+
+// check if items list empty
+void checkForListItems(){
+  final itemsList = querySelector(_UISelectors["itemsList"]) as UListElement;
+
+  if(itemsList.children.isEmpty){
+    itemsList.style.border = "none";
+  } else {
+    itemsList.style.border = "1px solid #e0e0e0";
+  }
 }

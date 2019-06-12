@@ -37,6 +37,10 @@ void loadEventListeners(Wallet wallet) {
   querySelector(UISelectors["updateBtn"]).onClick.listen((Event e)
   => updateItemSubmit(e, wallet));
 
+  // back button click event
+  querySelector(UISelectors["backBtn"]).onClick.listen((e){
+    setDefaultState();
+  });
 }
 
 void addItemSubmit(Event e, Wallet wallet){
@@ -101,7 +105,6 @@ void deleteItemSubmit(Event e, Wallet w){
 
       // remove item from items list UI
       deleteListItemUI(elemId.toString());
-      // TODO: check if any items left
     }
   }
 }
@@ -136,7 +139,7 @@ void updateItemSubmit(Event e, Wallet w) {
   // update UI
   updateListItemUI(updatedItem, w);
   clearUserInput();
-  //setDefaultState();
+  setDefaultState();
 }
 void getCurrencyInput(Event e, Wallet w){
   // get targeted element and currency list
@@ -185,6 +188,8 @@ void main() {
   (querySelector(UISelectors["baseCurrencyInput"]) as InputElement).value =
       "$baseCurrency $currencyFullName";
 
+  setDefaultState();
+  checkForListItems();
   loadEventListeners(wallet);
 
 }
