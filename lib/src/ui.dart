@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'dart:async';
 import 'package:e_wallet/src/item.dart';
 
 // define UI Selectors
@@ -73,7 +74,7 @@ void addListItemUI(Item listItem, Wallet wallet){
       li);
 
   // check if items list previously empty
-  checkForListItems();
+  toggleItemsListBorder();
 }
 
 void updateListItemUI(Item item, Wallet wallet){
@@ -98,6 +99,22 @@ void updateListItemUI(Item item, Wallet wallet){
    ''';
 }
 
+// populate items list
+void populateItemsList(Wallet wallet){
+  List<Item> itemsList = wallet.itemsList;
+  // clear existing list
+  (querySelector(_UISelectors["itemsList"]) as UListElement).innerHtml = '';
+
+  // add new li element for each item in wallet
+  for (var item in itemsList){
+    addListItemUI(item, wallet);
+  }
+}
+// clear items list
+void clearItemsList(){
+  (querySelector(_UISelectors["itemsList"]) as UListElement).innerHtml = '';
+}
+
 void updateTotalMoneyUI(String baseCurrency){
   // get exchanged amount from each item list and calculate total money
   double total = 0;
@@ -119,7 +136,7 @@ void updateTotalMoneyUI(String baseCurrency){
 void deleteListItemUI(String id){
   (querySelector('[data-id="$id"]') as HtmlElement).remove();
   // check if any list item left
-  checkForListItems();
+  toggleItemsListBorder();
 }
 
 // add edited item to form
@@ -205,7 +222,7 @@ void setEditState(){
 }
 
 // check if items list empty
-void checkForListItems(){
+void toggleItemsListBorder(){
   final itemsList = querySelector(_UISelectors["itemsList"]) as UListElement;
 
   if(itemsList.children.isEmpty){
@@ -213,4 +230,19 @@ void checkForListItems(){
   } else {
     itemsList.style.border = "1px solid #e0e0e0";
   }
+}
+
+// show alert
+void showAlert(String msg){
+
+  HtmlElement alertDiv = querySelector(".card .alert") as HtmlElement;
+  alertDiv.innerHtml = msg;
+  alertDiv.style.display = "block";
+
+  // set time out
+  Timer(Duration(seconds: 3), hideAlert );
+}
+
+hideAlert(){
+  (querySelector(".alert") as HtmlElement).style.display = "none";
 }

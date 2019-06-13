@@ -15,44 +15,54 @@ void loadEventListeners(Wallet wallet) {
 
   //  key up in currency input
   querySelectorAll(UISelectors["currencyInput"])
-     .onKeyUp.listen(showCurrencyList);
-   
-   //  click on currency list item
-  querySelectorAll(UISelectors["currencyList"]).onClick.listen
-   ((Event e) => getCurrencyInput(e, wallet));
+      .onKeyUp
+      .listen(showCurrencyList);
+
+  //  click on currency list item
+  querySelectorAll(UISelectors["currencyList"])
+      .onClick
+      .listen((Event e) => getCurrencyInput(e, wallet));
 
   // add item submit event
-  querySelector(UISelectors["addBtn"]).onClick.listen((Event e)
-  => addItemSubmit(e, wallet));
+  querySelector(UISelectors["addBtn"])
+      .onClick
+      .listen((Event e) => addItemSubmit(e, wallet));
 
   // delete item submit event
-  querySelector(UISelectors["itemsList"]).onClick.listen((Event e)
-  => deleteItemSubmit(e, wallet));
+  querySelector(UISelectors["itemsList"])
+      .onClick
+      .listen((Event e) => deleteItemSubmit(e, wallet));
 
   // edit item click event
-  querySelector(UISelectors["itemsList"]).onClick.listen((Event e)
-  => editItemClick(e, wallet));
+  querySelector(UISelectors["itemsList"])
+      .onClick
+      .listen((Event e) => editItemClick(e, wallet));
 
   // update item submit event
-  querySelector(UISelectors["updateBtn"]).onClick.listen((Event e)
-  => updateItemSubmit(e, wallet));
+  querySelector(UISelectors["updateBtn"])
+      .onClick
+      .listen((Event e) => updateItemSubmit(e, wallet));
 
   // back button click event
-  querySelector(UISelectors["backBtn"]).onClick.listen((e){
+  querySelector(UISelectors["backBtn"]).onClick.listen((Event e) {
     setDefaultState();
   });
+
+  // clear all click event
+  querySelector(UISelectors["clearBtn"]).onClick.listen((Event e) =>
+      clearAllClick(e, wallet));
 }
 
-void addItemSubmit(Event e, Wallet wallet){
+void addItemSubmit(Event e, Wallet wallet) {
   // get user input
   List input = getItemInput();
   String currency = input[0];
   double amount = num.parse(input[1]);
 
   // check for currency and amount input
-  if(currency != '' && amount != null){
+  if (currency != '' && amount != null) {
     // check if number is positive
-    if (amount < 0){
+    if (amount < 0) {
       // TODO: show alert
       // showAlert("Amount must be positive");
     } else {
@@ -64,17 +74,17 @@ void addItemSubmit(Event e, Wallet wallet){
       final dataItems = wallet.itemsList;
 
       // if items list empty than add new item
-      if (dataItems.isEmpty){
+      if (dataItems.isEmpty) {
         Item newItem = wallet.addItem(currency, amount);
         // update UI
         addListItemUI(newItem, wallet);
       } else {
         // check if currency already on the list
-       Item found = dataItems.singleWhere( (item) => item.currency ==
-           currency, orElse: () => null);
+        Item found = dataItems.singleWhere((item) => item.currency == currency,
+            orElse: () => null);
 
         // update list item
-        if (found != null){
+        if (found != null) {
           found.amount += amount;
           updateListItemUI(found, wallet);
         } else {
@@ -93,13 +103,13 @@ void addItemSubmit(Event e, Wallet wallet){
   e.preventDefault();
 }
 
-void deleteItemSubmit(Event e, Wallet w){
+void deleteItemSubmit(Event e, Wallet w) {
   final elem = e.target as HtmlElement;
-  if (elem.classes.contains('delete-item')){
+  if (elem.classes.contains('delete-item')) {
     // get item id
     int elemId = num.parse(elem.parent.parent.getAttribute('data-id'));
 
-    if (window.confirm("Are you sure?")){
+    if (window.confirm("Are you sure?")) {
       // remove item from wallet's items list
       w.deleteItem(elemId);
       // TODO: remove item from local storage
@@ -112,7 +122,7 @@ void deleteItemSubmit(Event e, Wallet w){
   }
 }
 
-void editItemClick(Event e, Wallet w){
+void editItemClick(Event e, Wallet w) {
   final elem = e.target as HtmlElement;
 
   if (elem.classes.contains('edit-item')) {
@@ -128,7 +138,6 @@ void editItemClick(Event e, Wallet w){
 }
 
 void updateItemSubmit(Event e, Wallet w) {
-
   List item = getItemInput(); // item[0] => currency,item[1] => amount
   // get only abbreviation from currency input
   String currency = item[0].split(" ")[0];
@@ -145,12 +154,13 @@ void updateItemSubmit(Event e, Wallet w) {
   clearUserInput();
   setDefaultState();
 }
-void getCurrencyInput(Event e, Wallet w){
+
+void getCurrencyInput(Event e, Wallet w) {
   // get targeted element and currency list
   var targetedElem = (e.target as HtmlElement);
   //print(targetedElem);
   var targetedList;
-  switch(targetedElem.classes.toString()){
+  switch (targetedElem.classes.toString()) {
     case 'small':
       // traverse DOM two levels up
       targetedList = targetedElem.parent.parent as HtmlElement;
@@ -158,28 +168,50 @@ void getCurrencyInput(Event e, Wallet w){
       // traverse up DOM to get parent of targeted element
       targetedElem = targetedElem.parent;
       continue collectionItem;
-      // continue get class: base ? item;
+    // continue get class: base ? item;
     collectionItem:
     case 'collection-item':
       targetedList = targetedElem.parent as HtmlElement;
-      if(targetedList.classes.contains('base')){
-
+      if (targetedList.classes.contains('base')) {
         // set base currency user input
-        final baseCurrencyInput = querySelector
-          (UISelectors["baseCurrencyInput"]) as InputElement;
+        final baseCurrencyInput =
+            querySelector(UISelectors["baseCurrencyInput"]) as InputElement;
         baseCurrencyInput.value = targetedElem.text;
         // update base currency in wallet with currency abbreviation only
         w.baseCurrency = targetedElem.text.split(" ")[0];
+        print(w.baseCurrency);
+        // TODO: update local storage base currency
+        // fetch new currency exchange rates
+        fetchCurrencyExchangeRates(w.baseCurrency);
+        // update all list items if any
+        populateItemsList(w);
+        // update total money
+        updateTotalMoneyUI(w.baseCurrency);
       } else {
         // set item currency user input
-        final itemCurrencyInput = querySelector
-          (UISelectors["itemCurrencyInput"]) as InputElement;
+        final itemCurrencyInput =
+            querySelector(UISelectors["itemCurrencyInput"]) as InputElement;
         itemCurrencyInput.value = targetedElem.text;
       }
       break;
   }
   (targetedList as HtmlElement).innerHtml = '';
+}
 
+clearAllClick(Event e, Wallet wallet){
+
+  if (window.confirm("Are you sure?")){
+    // clear items data
+    wallet.clearDataItems();
+    // TODO: clear local storage
+
+    // clear UI
+    clearUserInput();
+    clearItemsList();
+    updateTotalMoneyUI(wallet.baseCurrency);
+    // hide items list as none items left
+    toggleItemsListBorder();
+  }
 }
 
 void main() {
@@ -198,9 +230,9 @@ void main() {
   setDefaultState();
   // TODO: get list items from local storage
   // TODO: populate items list UI
+  populateItemsList(wallet);
   // update total converted money
   //updateTotalMoneyUI(baseCurrency);
-  checkForListItems();
+  toggleItemsListBorder();
   loadEventListeners(wallet);
-
 }

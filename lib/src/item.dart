@@ -100,7 +100,10 @@ class Wallet {
       return found;
     }
 
-  // TODO: clear all data items
+  // clear all data items
+  clearDataItems(){
+    _itemsList = [];
+  }
 
 }
 // Initialise empty object for exchange rates
