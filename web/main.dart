@@ -56,15 +56,13 @@ void loadEventListeners(Wallet wallet) {
 void addItemSubmit(Event e, Wallet wallet) {
   // get user input
   List input = getItemInput();
-  String currency = input[0];
-  double amount = num.parse(input[1]);
 
-  // check for currency and amount input
-  if (currency != '' && amount != null) {
-    // check if number is positive
+  if (input[0] != '' && input[1] != null){
+    String currency = input[0];
+    double amount = num.parse(input[1]);
+
     if (amount < 0) {
-      // TODO: show alert
-      // showAlert("Amount must be positive");
+      showAlert("Amount must be positive");
     } else {
       // get currency abbreviation
       currency = currency.split(" ")[0];
@@ -97,9 +95,9 @@ void addItemSubmit(Event e, Wallet wallet) {
       clearUserInput();
     }
   } else {
-    // TODO: show message that no input
-    // showAlert("Please fill the form");
+    showAlert("Please fill the form");
   }
+
   e.preventDefault();
 }
 
@@ -145,7 +143,6 @@ void updateItemSubmit(Event e, Wallet w) {
 
   // update current item
   Item updatedItem = w.updateItem(currency, amount);
-
   // TODO: update local storage
 
   // update UI
@@ -164,7 +161,6 @@ void getCurrencyInput(Event e, Wallet w) {
     case 'small':
       // traverse DOM two levels up
       targetedList = targetedElem.parent.parent as HtmlElement;
-
       // traverse up DOM to get parent of targeted element
       targetedElem = targetedElem.parent;
       continue collectionItem;
@@ -229,7 +225,7 @@ void main() {
   //
   setDefaultState();
   // TODO: get list items from local storage
-  // TODO: populate items list UI
+  // populate items list UI
   populateItemsList(wallet);
   // update total converted money
   //updateTotalMoneyUI(baseCurrency);
