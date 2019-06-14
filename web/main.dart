@@ -1,6 +1,7 @@
 import 'dart:html';
 import 'package:e_wallet/src/item.dart';
 import 'package:e_wallet/src/ui.dart';
+import 'package:e_wallet/src/storage.dart';
 
 final UISelectors = getUISelectors();
 
@@ -44,13 +45,14 @@ void loadEventListeners(Wallet wallet) {
       .listen((Event e) => updateItemSubmit(e, wallet));
 
   // back button click event
-  querySelector(UISelectors["backBtn"]).onClick.listen((Event e) {
-    setDefaultState();
-  });
+  querySelector(UISelectors["backBtn"])
+      .onClick
+      .listen((Event e) => setDefaultState());
 
   // clear all click event
-  querySelector(UISelectors["clearBtn"]).onClick.listen((Event e) =>
-      clearAllClick(e, wallet));
+  querySelector(UISelectors["clearBtn"])
+      .onClick
+      .listen((Event e) => clearAllClick(e, wallet));
 }
 
 void addItemSubmit(Event e, Wallet wallet) {
@@ -110,8 +112,8 @@ void deleteItemSubmit(Event e, Wallet w) {
     if (window.confirm("Are you sure?")) {
       // remove item from wallet's items list
       w.deleteItem(elemId);
-      // TODO: remove item from local storage
-
+      // remove item from local storage
+      removeItemFromStorage(elemId);
       // remove item from items list UI
       deleteListItemUI(elemId.toString());
       // update total money
@@ -143,7 +145,8 @@ void updateItemSubmit(Event e, Wallet w) {
 
   // update current item
   Item updatedItem = w.updateItem(currency, amount);
-  // TODO: update local storage
+  // update local storage
+  updateItemInStorage(updatedItem);
 
   // update UI
   updateListItemUI(updatedItem, w);
@@ -175,14 +178,9 @@ void getCurrencyInput(Event e, Wallet w) {
         baseCurrencyInput.value = targetedElem.text;
         // update base currency in wallet with currency abbreviation only
         w.baseCurrency = targetedElem.text.split(" ")[0];
-        print(w.baseCurrency);
-        // TODO: update local storage base currency
-        // fetch new currency exchange rates
-        fetchCurrencyExchangeRates(w.baseCurrency);
-        // update all list items if any
-        populateItemsList(w);
-        // update total money
-        updateTotalMoneyUI(w.baseCurrency);
+        // update local storage base currency
+        addBaseCurrencyToStorage(w.baseCurrency);
+        updateItemsListUI(w);
       } else {
         // set item currency user input
         final itemCurrencyInput =
@@ -199,8 +197,11 @@ clearAllClick(Event e, Wallet wallet){
   if (window.confirm("Are you sure?")){
     // clear items data
     wallet.clearDataItems();
-    // TODO: clear local storage
-
+    // clear local storage
+    clearAllStorage();
+    // set base currency to GBP as default
+    wallet.baseCurrency = 'GBP';
+    setBaseCurrencyInput(wallet.baseCurrency);
     // clear UI
     clearUserInput();
     clearItemsList();
@@ -211,24 +212,13 @@ clearAllClick(Event e, Wallet wallet){
 }
 
 void main() {
-  // initialise wallet
-  Wallet wallet = Wallet([], "GBP");
-  // default with GBP; TODO: get it from local storage
-  // set default base currency input on page load
-  String baseCurrency = wallet.baseCurrency;
-  String currencyFullName = getCurrencyFullName(baseCurrency);
-  (querySelector(UISelectors["baseCurrencyInput"]) as InputElement).value =
-      "$baseCurrency $currencyFullName";
-
-  // fetch current exchange currency rates
-  fetchCurrencyExchangeRates(baseCurrency);
-  //
+  // set initial state
   setDefaultState();
-  // TODO: get list items from local storage
-  // populate items list UI
-  populateItemsList(wallet);
-  // update total converted money
-  //updateTotalMoneyUI(baseCurrency);
+  // initialise wallet
+  Wallet wallet = Wallet(getItemsFromStorage(), getBaseCurrencyFromStorage());
+  // set default base currency input on page load
+  setBaseCurrencyInput(wallet.baseCurrency);
   toggleItemsListBorder();
+  updateItemsListUI(wallet);
   loadEventListeners(wallet);
 }

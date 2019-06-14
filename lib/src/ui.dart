@@ -110,9 +110,27 @@ void populateItemsList(Wallet wallet){
     addListItemUI(item, wallet);
   }
 }
+
+void updateItemsListUI(Wallet wallet) async{
+ await fetchCurrencyExchangeRates(wallet.baseCurrency);
+ // update all list items if any
+ populateItemsList(wallet);
+ // update total money
+ updateTotalMoneyUI(wallet.baseCurrency);
+}
+
 // clear items list
 void clearItemsList(){
   (querySelector(_UISelectors["itemsList"]) as UListElement).innerHtml = '';
+}
+
+// set base currency input value
+void setBaseCurrencyInput(String baseCurrency){
+  // get currency's full name
+   String currencyFullName = getCurrencyFullName(baseCurrency);
+
+   (querySelector(_UISelectors["baseCurrencyInput"]) as InputElement).value =
+  "$baseCurrency $currencyFullName";
 }
 
 void updateTotalMoneyUI(String baseCurrency){
@@ -243,6 +261,6 @@ void showAlert(String msg){
   Timer(Duration(seconds: 3), hideAlert );
 }
 
-hideAlert(){
+void hideAlert(){
   (querySelector(".alert") as HtmlElement).style.display = "none";
 }

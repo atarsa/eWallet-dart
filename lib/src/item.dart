@@ -1,5 +1,6 @@
 import 'dart:html';
 import 'dart:convert';
+import 'package:e_wallet/src/storage.dart';
 
 class Item {
   int id;
@@ -11,6 +12,17 @@ class Item {
   @override
   String toString() => '$id $currency $amount';
 
+  // convert item to json
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'currency': currency,
+    'amount': amount
+  };
+  // get Item object from Json
+  Item.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        currency = json['currency'],
+        amount = json['amount'];
 }
 
 class Wallet {
@@ -32,7 +44,7 @@ class Wallet {
   String get baseCurrency{
     return _baseCurrency;
   }
-  set baseCurrency(String currency){
+  set baseCurrency(String currency) {
     this._baseCurrency = currency;
   }
   // current element
@@ -58,7 +70,9 @@ class Wallet {
     Item newItem = Item(id, currency, amount);
     // add to array
     _itemsList.add(newItem);
-    // TODO: add to local storage
+    // add to local storage
+    addItemToStorage(newItem.toJson());
+
     // return new item
     return newItem;
   }
@@ -89,8 +103,7 @@ class Wallet {
     // get data item by id
     Item getItemById(int id) {
       Item found;
-
-      // loop trough items TODO: for loop instead of forEach?
+      // loop trough items
       _itemsList.forEach((item) =>
       {
         if (item.id == id){
@@ -104,7 +117,6 @@ class Wallet {
   clearDataItems(){
     _itemsList = [];
   }
-
 }
 // Initialise empty object for exchange rates
 Map<String, dynamic> _exchangeRates = {};
