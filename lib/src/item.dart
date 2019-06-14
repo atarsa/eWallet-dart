@@ -186,16 +186,22 @@ setExchangeRates(Map<String,num> rates){
 
 //  fetch currencies exchange rates
  void fetchCurrencyExchangeRates (String baseCurrency) async{
-  String url = 'https://api.exchangeratesapi.io/latest?base=$baseCurrency';
+  try {
+    String url = 'https://api.exchangeratesapi.io/latest?base=$baseCurrency';
 
-  var exchangeRates = {};
+    var exchangeRates = {};
 
-  var dataString = await HttpRequest.getString(url);
-  // convert string to Json
-  var dataJson = jsonDecode(dataString);
-  // get exchange rates
-  exchangeRates = (dataJson["rates"] as Map).cast<String, num>();
-  setExchangeRates(exchangeRates);
+    var dataString = await HttpRequest.getString(url);
+    // convert string to Json
+    var dataJson = jsonDecode(dataString);
+    // get exchange rates
+    exchangeRates = (dataJson["rates"] as Map).cast<String, num>();
+    setExchangeRates(exchangeRates);
+  } catch ( e) {
+    // clear base currency value if null value
+    (querySelector("#base-currency") as InputElement).value
+    = "";
+  }
 }
 
 String exchangeMoney(String currency, double amount){
