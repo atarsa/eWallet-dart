@@ -28,6 +28,7 @@ void loadEventListeners(Wallet wallet) {
   querySelector(UISelectors["baseCurrencyList"])
       .onClick
       .listen((Event e) => pickBaseCurrency(e, wallet));
+
   // add item submit event
   querySelector(UISelectors["addBtn"])
       .onClick
@@ -176,44 +177,29 @@ void pickBaseCurrency(Event e, Wallet w){
   addBaseCurrencyToStorage(baseCurrency);
   // update base currency button with new base currency and country flag
   updateBaseCurrencyBtn(baseCurrency);
-
+  // update UI
+  updateItemsListUI(w);
 }
 
 void getCurrencyInput(Event e, Wallet w) {
   // get targeted element and currency list
-  var targetedElem = (e.target as HtmlElement);
-  //print(targetedElem);
+  var elem = (e.target as HtmlElement);
   var targetedList;
-  switch (targetedElem.classes.toString()) {
-    case 'small':
-      // traverse DOM two levels up
-      targetedList = targetedElem.parent.parent as HtmlElement;
-      // traverse up DOM to get parent of targeted element
-      targetedElem = targetedElem.parent;
-      continue collectionItem;
-    // continue get class: base ? item;
-    collectionItem:
-    case 'collection-item':
-      targetedList = targetedElem.parent as HtmlElement;
-      if (targetedList.classes.contains('base')) {
-        // set base currency user input
-        final baseCurrencyInput =
-            querySelector(UISelectors["baseCurrencyInput"]) as InputElement;
-        baseCurrencyInput.value = targetedElem.text;
-        // update base currency in wallet with currency abbreviation only
-        w.baseCurrency = targetedElem.text.split(" ")[0];
-        // update local storage base currency
-        addBaseCurrencyToStorage(w.baseCurrency);
-        updateItemsListUI(w);
-      } else {
-        // set item currency user input
-        final itemCurrencyInput =
-            querySelector(UISelectors["itemCurrencyInput"]) as InputElement;
-        itemCurrencyInput.value = targetedElem.text;
-      }
-      break;
-  }
-  (targetedList as HtmlElement).innerHtml = '';
+  // Check what element targeted to traverse DOM accordingly
+  if (elem.matches('.small')) {
+    // traverse DOM two levels up
+    targetedList = elem.parent.parent as HtmlElement;
+    // traverse up DOM to get parent of targeted element
+    elem = elem.parent;
+    } else {
+      // traverse DOM one level up
+      targetedList = elem.parent as HtmlElement;
+    }
+    // set item currency user input
+    final itemCurrencyInput =
+    querySelector(UISelectors["itemCurrencyInput"]) as InputElement;
+    itemCurrencyInput.value = elem.text;
+    (targetedList as HtmlElement).innerHtml = '';
 }
 
 clearAllClick(Event e, Wallet wallet){

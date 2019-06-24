@@ -9,13 +9,12 @@ final _UISelectors = {
   'baseCurrencyList': '#base-currency-list',
   // item user input
   'itemCurrencyInput': '#item-currency',
-  //'baseCurrencyInput': '#base-currency',
   'currencyInput': '.currency-input',
   'itemAmountInput': '#item-amount',
   'itemsList': '#items-list',
   'listItems': '#items-list li',
+  // currency list
   'currencyListItem': '.currency-list.item',
-  'currencyListBase': '.currency-list.base',
   'currencyList': '.currency-list',
   'convertedAmount': '.converted-amount',
   // total
