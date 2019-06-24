@@ -24,6 +24,10 @@ void loadEventListeners(Wallet wallet) {
       .onClick
       .listen((Event e) => getCurrencyInput(e, wallet));
 
+  // click on base currency dropdown list
+  querySelector(UISelectors["baseCurrencyList"])
+      .onClick
+      .listen((Event e) => pickBaseCurrency(e, wallet));
   // add item submit event
   querySelector(UISelectors["addBtn"])
       .onClick
@@ -155,6 +159,26 @@ void updateItemSubmit(Event e, Wallet w) {
   setDefaultState();
 }
 
+// Change base currency on item click
+void pickBaseCurrency(Event e, Wallet w){
+  var baseCurrency;
+  final elem = e.target as Element;
+  // if 'click' on flag
+  if (elem.matches('.flag-icon')){
+    // get parent element
+    baseCurrency = elem.parent.dataset['currency'];
+  } else {
+    baseCurrency = elem.dataset['currency'];
+  }
+  // update base currency in wallet
+  w.baseCurrency = baseCurrency;
+  // update base currency in local storage
+  addBaseCurrencyToStorage(baseCurrency);
+  // update base currency button with new base currency and country flag
+  updateBaseCurrencyBtn(baseCurrency);
+
+}
+
 void getCurrencyInput(Event e, Wallet w) {
   // get targeted element and currency list
   var targetedElem = (e.target as HtmlElement);
@@ -201,7 +225,7 @@ clearAllClick(Event e, Wallet wallet){
     clearAllStorage();
     // set base currency to GBP as default
     wallet.baseCurrency = 'GBP';
-    setBaseCurrencyInput(wallet.baseCurrency);
+    //setBaseCurrencyInput(wallet.baseCurrency);
     // clear UI
     clearUserInput();
     clearItemsList();
@@ -217,7 +241,7 @@ void main() {
   // initialise wallet
   Wallet wallet = Wallet(getItemsFromStorage(), getBaseCurrencyFromStorage());
   // set default base currency input on page load
-  setBaseCurrencyInput(wallet.baseCurrency);
+  updateBaseCurrencyBtn(wallet.baseCurrency);
   toggleItemsListBorder();
   updateItemsListUI(wallet);
   loadEventListeners(wallet);

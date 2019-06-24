@@ -4,8 +4,12 @@ import 'package:e_wallet/src/item.dart';
 
 // define UI Selectors
 final _UISelectors = {
+  // base currency
+  'baseCurrencyBtn': '.btn--base-currency',
+  'baseCurrencyList': '#base-currency-list',
+  // item user input
   'itemCurrencyInput': '#item-currency',
-  'baseCurrencyInput': '#base-currency',
+  //'baseCurrencyInput': '#base-currency',
   'currencyInput': '.currency-input',
   'itemAmountInput': '#item-amount',
   'itemsList': '#items-list',
@@ -124,14 +128,29 @@ void clearItemsList(){
   (querySelector(_UISelectors["itemsList"]) as UListElement).innerHtml = '';
 }
 
-// set base currency input value
-void setBaseCurrencyInput(String baseCurrency){
-  // get currency's full name
-   String currencyFullName = getCurrencyFullName(baseCurrency);
+// set base currency input value TODO: review if needed
+//void setBaseCurrencyInput(String baseCurrency){
+//  // get currency's full name
+//   String currencyFullName = getCurrencyFullName(baseCurrency);
+//
+//   (querySelector(_UISelectors["baseCurrencyInput"]) as InputElement).value =
+//  "$baseCurrency $currencyFullName";
+//}
+// Update base currency button inner HTML with new currency and its flag
+void updateBaseCurrencyBtn(String baseCurrency){
+  // get list of currencies with country codes
+  Map<String, String> countryCode = getCountryCodes();
 
-   (querySelector(_UISelectors["baseCurrencyInput"]) as InputElement).value =
-  "$baseCurrency $currencyFullName";
+  var baseCurrencyBtn = querySelector(_UISelectors["baseCurrencyBtn"]) as
+  HtmlElement;
+
+  baseCurrencyBtn.innerHtml = '''<span class='flag-icon flag-icon-${countryCode[baseCurrency]}'>
+  </span>
+  $baseCurrency
+  <span class='fas fa-chevron-down'></span>''';
+
 }
+
 
 void updateTotalMoneyUI(String baseCurrency){
   // get exchanged amount from each item list and calculate total money

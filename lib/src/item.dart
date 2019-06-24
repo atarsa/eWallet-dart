@@ -121,7 +121,7 @@ class Wallet {
 // Initialise empty object for exchange rates
 Map<String, dynamic> _exchangeRates = {};
 
-// Available currencies
+// Available currencies with full names  country code
 /* list compatible with https://exchangeratesapi.io/
 and foreign exchange rates published by
 the European Central Bank
@@ -160,9 +160,50 @@ Map<String, String> _currenciesList = {'EUR': 'Euro',
 'THB' :	'Thai baht',
 'ZAR': 	'South African rand'};
 
+// Available currencies with country code
+Map<String, String> _currencyCountryList = {'EUR': 'eu',
+  'USD': 'us',
+  'JPY': 'jp',
+  'BGN': 'bg',
+  'CZK': 'cz',
+  'DKK': 'dk',
+  'GBP': 'gb',
+  'HUF' :	'hu',
+  'PLN' :	'pl',
+  'RON' :	'ro',
+  'SEK' :	'se',
+  'CHF' :	'ch',
+  'ISK' :	'is',
+  'NOK' :	'no',
+  'HRK' :	'hr',
+  'RUB' :	'ru',
+  'TRY' :	'tr',
+  'AUD' :	'au',
+  'BRL': 	'br',
+  'CAD': 	'ca',
+  'CNY' :  'cn',
+  'HKD'  : 'hk',
+  'IDR'  : 'id',
+  'ILS' :	'il',
+  'INR' :	'in',
+  'KRW' : 'kr',
+  'MXN' :	'mx',
+  'MYR' :	'my',
+  'NZD' :	'nz',
+  'PHP' :	'ph',
+  'SGD' :	'sg',
+  'THB' :	'th',
+  'ZAR': 	'za'
+};
+
+
 // Public methods
 Map<String,String> getCurrencyList(){
   return _currenciesList;
+}
+
+Map<String, String> getCountryCodes(){
+  return _currencyCountryList;
 }
 
 String getCurrencyFullName(String currencyAbrr){
@@ -175,10 +216,12 @@ String getCurrencyFullName(String currencyAbrr){
 
   return currencyFullName;
 }
+
 // get exchange rates
 Map<String,num> getExchangeRates(){
     return _exchangeRates;
   }
+
 // set exchange rate
 setExchangeRates(Map<String,num> rates){
   _exchangeRates = rates;
