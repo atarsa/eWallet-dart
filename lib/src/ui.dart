@@ -21,7 +21,10 @@ final _UISelectors = {
   'currencyListItem': '.currency-list.item',
   'currencyList': '.currency-list',
   'convertedAmount': '.converted-amount',
+  // wallet message
+  'walletMessage': '.wallet .message',
   // total
+  'totalSummary': '.total',
   'totalAmount': 'h4 .total-money',
   'totalCurrency': 'h4 .base-currency',
   // buttons
@@ -79,6 +82,7 @@ void addListItemUI(Item listItem, Wallet wallet){
   // Insert element
   querySelector(_UISelectors["itemsList"]).insertAdjacentElement('beforeend',
       li);
+  checkForListItems(); // check if list previously empty
 
 }
 
@@ -116,6 +120,24 @@ void populateItemsList(Wallet wallet){
   }
 }
 
+// check if any items in the items list
+void checkForListItems(){
+  UListElement itemsList = querySelector(_UISelectors["itemsList"]);
+  HtmlElement totalSummary = querySelector(_UISelectors["totalSummary"]);
+  HtmlElement walletMessage = querySelector(_UISelectors["walletMessage"]);
+
+  // if no items in the list
+  if(itemsList.children.isEmpty){
+    // hide "total", show message
+    totalSummary.style.display = "none";
+    walletMessage.style.display = "block";
+  } else {
+    // show "total", hide message
+    totalSummary.style.display = "block";
+    walletMessage.style.display = "none";
+  }
+
+}
 // populate Today's rates list with latest currency exchange rates
 void populateTodaysRates(){
   Map<String,num> exchangedRates = getExchangeRates();
@@ -151,18 +173,22 @@ void updateUI(Wallet wallet) async{
  await fetchCurrencyExchangeRates(wallet.baseCurrency);
  // update today's rates list
  setTodaysRatesList(wallet.baseCurrency);
+
+ // update all list items if any
+ populateItemsList(wallet);
+ checkForListItems();
+ // update total money
+ updateTotalMoneyUI(wallet.baseCurrency);
+ // update today's rates list
  populateTodaysRates();
  updateExchangeTime();
  updateBaseCurrencyInTodaysRates(wallet.baseCurrency);
- // update all list items if any
- populateItemsList(wallet);
- // update total money
- updateTotalMoneyUI(wallet.baseCurrency);
 }
 
 // clear items list
 void clearItemsList(){
   (querySelector(_UISelectors["itemsList"]) as UListElement).innerHtml = '';
+  checkForListItems(); // show wallet message
 }
 
 // Update base currency button inner HTML with new currency and its flag
@@ -201,7 +227,7 @@ void updateTotalMoneyUI(String baseCurrency){
 void deleteListItemUI(String id){
   (querySelector('[data-id="$id"]') as HtmlElement).remove();
   // check if any list item left
-  toggleItemsListBorder();
+  checkForListItems();
 }
 
 // add edited item to form
@@ -282,17 +308,6 @@ void setEditState(){
   "inline";
   (querySelector(_UISelectors["backBtn"]) as HtmlElement).style.display =
   "inline";
-}
-
-// TODO: check if items list empty
-void toggleItemsListBorder(){
-  final itemsList = querySelector(_UISelectors["itemsList"]) as UListElement;
-
-  if(itemsList.children.isEmpty){
-    itemsList.style.border = "none";
-  } else {
-    itemsList.style.border = "1px solid #e0e0e0";
-  }
 }
 
 // show alert
