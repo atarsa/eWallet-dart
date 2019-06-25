@@ -121,7 +121,7 @@ class Wallet {
 // Initialise empty object for exchange rates
 Map<String, dynamic> _exchangeRates = {};
 
-// Available currencies with full names  country code
+// Available currencies with full names
 /* list compatible with https://exchangeratesapi.io/
 and foreign exchange rates published by
 the European Central Bank
@@ -215,6 +215,29 @@ String getCurrencyFullName(String currencyAbrr){
   });
 
   return currencyFullName;
+}
+
+// Check if given currency is in _currenciesList
+bool isCurrencyValid(String currency){
+  bool found = false;
+
+  if (currency.contains(" ")){
+    // split currency string to currency array
+    List<String> currencyList = currency.split(" ");
+
+    if (_currenciesList.containsKey(currencyList[0])
+        || _currenciesList.containsKey(currencyList[1])
+        || _currenciesList.containsValue(currencyList[0])
+        || _currenciesList.containsValue(currencyList[1])){
+      found = true;
+    }
+  } else {
+    if (_currenciesList.containsKey(currency) ||
+        _currenciesList.containsValue(currency)){
+      found = true;
+    }
+  }
+  return found;
 }
 
 // get exchange rates

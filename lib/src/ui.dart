@@ -127,14 +127,6 @@ void clearItemsList(){
   (querySelector(_UISelectors["itemsList"]) as UListElement).innerHtml = '';
 }
 
-// set base currency input value TODO: review if needed
-//void setBaseCurrencyInput(String baseCurrency){
-//  // get currency's full name
-//   String currencyFullName = getCurrencyFullName(baseCurrency);
-//
-//   (querySelector(_UISelectors["baseCurrencyInput"]) as InputElement).value =
-//  "$baseCurrency $currencyFullName";
-//}
 // Update base currency button inner HTML with new currency and its flag
 void updateBaseCurrencyBtn(String baseCurrency){
   // get list of currencies with country codes
@@ -149,7 +141,6 @@ void updateBaseCurrencyBtn(String baseCurrency){
   <span class='fas fa-chevron-down'></span>''';
 
 }
-
 
 void updateTotalMoneyUI(String baseCurrency){
   // get exchanged amount from each item list and calculate total money
@@ -193,24 +184,16 @@ void addToForm(Item editedItem){
 
 // show list of available currencies on user input change
 void showCurrencyList(Event e){
+  // get list of available currencies
   Map<String, String> availableCurrency = getCurrencyList();
-  final clickedElem = e.target as HtmlElement;
+  // get list of country code
+  Map<String, String> countryCode = getCountryCodes();
 
-  UListElement currencyList;
-  String currencyInput;
+  // item currency input
+  UListElement currencyList = querySelector(_UISelectors["currencyListItem"]);
+  String currencyInput = (querySelector(_UISelectors["itemCurrencyInput"]) as
+    InputElement).value;
 
-  // get classes of clicked element
-  if(clickedElem.classes.contains('base')){
-    // base currency input
-    currencyList = querySelector(_UISelectors["currencyListBase"]);
-    currencyInput = (querySelector(_UISelectors["baseCurrencyInput"]) as
-    InputElement).value;
-  } else {
-    // item currency input
-    currencyList = querySelector(_UISelectors["currencyListItem"]);
-    currencyInput = (querySelector(_UISelectors["itemCurrencyInput"]) as
-    InputElement).value;
-  }
   // clear list on each key up
   currencyList.innerHtml = '';
 
@@ -220,7 +203,13 @@ void showCurrencyList(Event e){
       .entries ){
     if (currency.key.toLowerCase().contains(currencyInput.toLowerCase()) ||
     currency.value.toLowerCase().contains(currencyInput.toLowerCase())){
-      ulHTML += '''<li class='collection-item'>${currency.key} <span class='small'>${currency.value} </span></li>''';
+      String currencyAbbr = currency.key;
+      ulHTML += '''
+      <li class='collection-item'>
+        <span class="flag-icon 
+        flag-icon-${countryCode[currencyAbbr]}"></span> ${currency.key} <span
+         class='small'>${currency.value} </span>
+      </li>''';
     }
   }
   // update currency list inner html

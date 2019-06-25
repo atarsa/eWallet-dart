@@ -71,40 +71,45 @@ void addItemSubmit(Event e, Wallet wallet) {
     if (amount < 0) {
       showAlert("Amount must be positive");
     } else {
-      // get currency abbreviation
-      currency = currency.split(" ")[0];
+      // validate currency input
+      if (isCurrencyValid(currency)){
 
-      // check if currency already in items list
-      // -> if yes update it instead of creating new item
-      final dataItems = wallet.itemsList;
+        // get currency abbreviation
+        currency = currency.split(" ")[0];
 
-      // if items list empty than add new item
-      if (dataItems.isEmpty) {
-        Item newItem = wallet.addItem(currency, amount);
-        // update UI
-        addListItemUI(newItem, wallet);
-      } else {
-        // check if currency already on the list
-        Item found = dataItems.singleWhere((item) => item.currency == currency,
-            orElse: () => null);
+        // check if currency already in items list
+        // -> if yes update it instead of creating new item
+        final dataItems = wallet.itemsList;
 
-        // update list item
-        if (found != null) {
-          found.amount += amount;
-          updateListItemUI(found, wallet);
-        } else {
-          // add new item to the list
+        // if items list empty than add new item
+        if (dataItems.isEmpty) {
           Item newItem = wallet.addItem(currency, amount);
+          // update UI
           addListItemUI(newItem, wallet);
+        } else {
+          // check if currency already on the list
+          Item found = dataItems.singleWhere((item) => item.currency == currency,
+              orElse: () => null);
+
+          // update list item
+          if (found != null) {
+            found.amount += amount;
+            updateListItemUI(found, wallet);
+          } else {
+            // add new item to the list
+            Item newItem = wallet.addItem(currency, amount);
+            addListItemUI(newItem, wallet);
+          }
         }
+        updateTotalMoneyUI(wallet.baseCurrency);
+      } else {
+        showAlert('"$currency" is not a valid currency. Please try again.');
       }
-      updateTotalMoneyUI(wallet.baseCurrency);
       clearUserInput();
     }
   } else {
     showAlert("Please fill the form");
   }
-
   e.preventDefault();
 }
 
@@ -184,9 +189,10 @@ void pickBaseCurrency(Event e, Wallet w){
 void getCurrencyInput(Event e, Wallet w) {
   // get targeted element and currency list
   var elem = (e.target as HtmlElement);
+
   var targetedList;
   // Check what element targeted to traverse DOM accordingly
-  if (elem.matches('.small')) {
+  if (elem.matches('.small') || elem.matches('.flag-icon')) {
     // traverse DOM two levels up
     targetedList = elem.parent.parent as HtmlElement;
     // traverse up DOM to get parent of targeted element
@@ -198,7 +204,8 @@ void getCurrencyInput(Event e, Wallet w) {
     // set item currency user input
     final itemCurrencyInput =
     querySelector(UISelectors["itemCurrencyInput"]) as InputElement;
-    itemCurrencyInput.value = elem.text;
+
+    itemCurrencyInput.value = elem.text.trim();
     (targetedList as HtmlElement).innerHtml = '';
 }
 
@@ -216,6 +223,7 @@ clearAllClick(Event e, Wallet wallet){
     clearUserInput();
     clearItemsList();
     updateTotalMoneyUI(wallet.baseCurrency);
+    updateBaseCurrencyBtn(wallet.baseCurrency);
     // hide items list as none items left
     toggleItemsListBorder();
   }
@@ -226,6 +234,7 @@ void main() {
   setDefaultState();
   // initialise wallet
   Wallet wallet = Wallet(getItemsFromStorage(), getBaseCurrencyFromStorage());
+
   // set default base currency input on page load
   updateBaseCurrencyBtn(wallet.baseCurrency);
   toggleItemsListBorder();
