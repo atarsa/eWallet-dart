@@ -13,6 +13,10 @@ final _UISelectors = {
   'itemAmountInput': '#item-amount',
   'itemsList': '#items-list',
   'listItems': '#items-list li',
+  // rates list
+  'ratesList': '.collection--rates',
+  'ratesBaseCurrency': '.card--rates .base-currency',
+  'ratesLastUpdated': '.card--rates .update-time',
   // currency list
   'currencyListItem': '.currency-list.item',
   'currencyList': '.currency-list',
@@ -76,8 +80,6 @@ void addListItemUI(Item listItem, Wallet wallet){
   querySelector(_UISelectors["itemsList"]).insertAdjacentElement('beforeend',
       li);
 
-  // check if items list previously empty
-  toggleItemsListBorder();
 }
 
 void updateListItemUI(Item item, Wallet wallet){
@@ -114,8 +116,44 @@ void populateItemsList(Wallet wallet){
   }
 }
 
-void updateItemsListUI(Wallet wallet) async{
+// populate Today's rates list with latest currency exchange rates
+void populateTodaysRates(){
+  Map<String,num> exchangedRates = getExchangeRates();
+  Map<String,String> countryCodes = getCountryCodes();
+  List<String> todayRatesList = getTodaysRatesList();
+
+  UListElement ratesList = querySelector(_UISelectors["ratesList"]);
+  ratesList.innerHtml = "";
+
+  for (String currency in todayRatesList){
+    ratesList.innerHtml += '''
+    <li class="collection-item">
+      <span class="flag-icon flag-icon-${countryCodes[currency]}"></span>
+      <span class="left-align"> $currency </span>
+      <span class="right">${exchangedRates[currency].toStringAsFixed(3)}</span>
+    </li>
+    ''';
+  }
+}
+
+// update rate exchange time in today's rates card
+void updateExchangeTime(){
+  String updateTime = getExchangeRateLastUpdate();
+  querySelector(_UISelectors["ratesLastUpdated"]).innerHtml = updateTime;
+}
+
+void updateBaseCurrencyInTodaysRates(String baseCurrency){
+  querySelector(_UISelectors["ratesBaseCurrency"]).innerHtml = '1 '
+      '$baseCurrency =';
+}
+
+void updateUI(Wallet wallet) async{
  await fetchCurrencyExchangeRates(wallet.baseCurrency);
+ // update today's rates list
+ setTodaysRatesList(wallet.baseCurrency);
+ populateTodaysRates();
+ updateExchangeTime();
+ updateBaseCurrencyInTodaysRates(wallet.baseCurrency);
  // update all list items if any
  populateItemsList(wallet);
  // update total money
@@ -246,7 +284,7 @@ void setEditState(){
   "inline";
 }
 
-// check if items list empty
+// TODO: check if items list empty
 void toggleItemsListBorder(){
   final itemsList = querySelector(_UISelectors["itemsList"]) as UListElement;
 

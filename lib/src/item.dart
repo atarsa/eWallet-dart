@@ -1,5 +1,6 @@
 import 'dart:html';
 import 'dart:convert';
+import 'package:intl/intl.dart';
 import 'package:e_wallet/src/storage.dart';
 
 class Item {
@@ -29,6 +30,7 @@ class Wallet {
   List<Item> _itemsList = [];
   String _baseCurrency = 'GBP';
   Item _currentItem;
+
   // Constructor
   Wallet(this._itemsList, this._baseCurrency);
 
@@ -120,6 +122,10 @@ class Wallet {
 }
 // Initialise empty object for exchange rates
 Map<String, dynamic> _exchangeRates = {};
+// Initialise empty today's rates list
+List<String> _todaysRatesList;
+// Initialise empty String to keep exchange rates last update
+DateTime _exchangeRateLastUpdate;
 
 // Available currencies with full names
 /* list compatible with https://exchangeratesapi.io/
@@ -263,6 +269,9 @@ setExchangeRates(Map<String,num> rates){
     // get exchange rates
     exchangeRates = (dataJson["rates"] as Map).cast<String, num>();
     setExchangeRates(exchangeRates);
+    // update exchange rates date
+    setExchangeRateLastUpdate(DateTime.now().toLocal());
+
   } catch ( e) {
     // clear base currency value if null value
     (querySelector("#base-currency") as InputElement).value
@@ -270,9 +279,51 @@ setExchangeRates(Map<String,num> rates){
   }
 }
 
+// get today's rates list
+List<String> getTodaysRatesList(){
+  return _todaysRatesList;
+}
+// set today's rates list
+setTodaysRatesList(baseCurrency){
+  // depending on base currency show different set of today's rates
+  switch(baseCurrency){
+    case 'GBP':
+      _todaysRatesList = ["USD", "EUR", "CAD", "AUD", "PLN"];
+      break;
+    case 'USD':
+      _todaysRatesList = ["GBP", "EUR", "CAD", "AUD", "PLN"];
+      break;
+    case 'EUR':
+      _todaysRatesList = ["GBP", "USD", "CAD", "AUD", "PLN"];
+      break;
+    case 'CAD':
+      _todaysRatesList = ["GBP", "EUR", "USD", "AUD", "PLN"];
+      break;
+    case 'AUD':
+      _todaysRatesList = ["GBP", "EUR", "CAD", "USD", "PLN"];
+      break;
+    default:
+      _todaysRatesList = ["USD", "GBP", "EUR", "CAD", "AUD"];
+  }
+}
+
+// get exchange rates last update time
+String getExchangeRateLastUpdate(){
+  // format date
+  DateTime time = _exchangeRateLastUpdate;
+  var formatter = new DateFormat("dd/MM/yyyy, HH:mm:ss");
+  String formattedDate = formatter.format(time);
+  return formattedDate;
+}
+
+// set exchange rates last update time
+void setExchangeRateLastUpdate(DateTime date){
+   _exchangeRateLastUpdate = date;
+}
+
 String exchangeMoney(String currency, double amount){
   double money = 0;
-  //var exchangeRates = Map.from(_exchangeRates);
+
   // get exchange rate for given currency
   for (var key in _exchangeRates.keys){
     if (key == currency){

@@ -183,7 +183,7 @@ void pickBaseCurrency(Event e, Wallet w){
   // update base currency button with new base currency and country flag
   updateBaseCurrencyBtn(baseCurrency);
   // update UI
-  updateItemsListUI(w);
+  updateUI(w);
 }
 
 void getCurrencyInput(Event e, Wallet w) {
@@ -224,8 +224,6 @@ clearAllClick(Event e, Wallet wallet){
     clearItemsList();
     updateTotalMoneyUI(wallet.baseCurrency);
     updateBaseCurrencyBtn(wallet.baseCurrency);
-    // hide items list as none items left
-    toggleItemsListBorder();
   }
 }
 
@@ -235,9 +233,9 @@ void main() {
   // initialise wallet
   Wallet wallet = Wallet(getItemsFromStorage(), getBaseCurrencyFromStorage());
 
-  // set default base currency input on page load
+  // set default base currency btn on page load
   updateBaseCurrencyBtn(wallet.baseCurrency);
-  toggleItemsListBorder();
-  updateItemsListUI(wallet);
+  //toggleItemsListBorder();
+  updateUI(wallet);
   loadEventListeners(wallet);
 }
