@@ -218,7 +218,6 @@ clearAllClick(Event e, Wallet wallet){
     clearAllStorage();
     // set base currency to GBP as default
     wallet.baseCurrency = 'GBP';
-    //setBaseCurrencyInput(wallet.baseCurrency);
     // clear UI
     clearUserInput();
     clearItemsList();
@@ -235,7 +234,6 @@ void main() {
 
   // set default base currency btn on page load
   updateBaseCurrencyBtn(wallet.baseCurrency);
-  //toggleItemsListBorder();
   updateUI(wallet);
   loadEventListeners(wallet);
 }

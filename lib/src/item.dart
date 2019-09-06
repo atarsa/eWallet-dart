@@ -58,7 +58,7 @@ class Wallet {
   }
 
   // class methods
-  //  add item to items array
+  // add item to items array
   Item addItem(String currency, double amount){
     int id;
     // create id
@@ -138,33 +138,33 @@ Map<String, String> _currenciesList = {'EUR': 'Euro',
 'BGN': 'Bulgarian lev',
 'CZK': 'Czech koruna',
 'DKK': 'Danish krone',
-'GBP': 	'Pound sterling',
-'HUF' :	'Hungarian forint',
-'PLN' :	'Polish zloty',
-'RON' :	'Romanian leu',
-'SEK' :	'Swedish krona',
-'CHF' :	'Swiss franc',
-'ISK' :	'Icelandic krona',
-'NOK' :	'Norwegian krone',
-'HRK' :	'Croatian kuna',
-'RUB' :	'Russian rouble',
-'TRY' :	'Turkish lira',
-'AUD' :	'Australian dollar',
-'BRL': 	'Brazilian real',
-'CAD': 	'Canadian dollar',
-'CNY' :  'Chinese yuan renminbi',
-'HKD'  : 'Hong Kong dollar',
-'IDR'  : 'Indonesian rupiah',
-'ILS' :	'Israeli shekel',
-'INR' :	'Indian rupee',
-'KRW' :'South Korean won',
-'MXN' :	'Mexican peso',
-'MYR' :	'Malaysian ringgit',
-'NZD' :	'New Zealand dollar',
-'PHP' :	'Philippine peso',
-'SGD' :	'Singapore dollar',
-'THB' :	'Thai baht',
-'ZAR': 	'South African rand'};
+'GBP': 'Pound sterling',
+'HUF': 'Hungarian forint',
+'PLN': 'Polish zloty',
+'RON': 'Romanian leu',
+'SEK': 'Swedish krona',
+'CHF': 'Swiss franc',
+'ISK': 'Icelandic krona',
+'NOK': 'Norwegian krone',
+'HRK': 'Croatian kuna',
+'RUB': 'Russian rouble',
+'TRY': 'Turkish lira',
+'AUD': 'Australian dollar',
+'BRL': 'Brazilian real',
+'CAD': 'Canadian dollar',
+'CNY': 'Chinese yuan renminbi',
+'HKD': 'Hong Kong dollar',
+'IDR': 'Indonesian rupiah',
+'ILS': 'Israeli shekel',
+'INR': 'Indian rupee',
+'KRW': 'South Korean won',
+'MXN': 'Mexican peso',
+'MYR': 'Malaysian ringgit',
+'NZD': 'New Zealand dollar',
+'PHP': 'Philippine peso',
+'SGD': 'Singapore dollar',
+'THB': 'Thai baht',
+'ZAR': 'South African rand'};
 
 // Available currencies with country code
 Map<String, String> _currencyCountryList = {'EUR': 'eu',
@@ -174,34 +174,33 @@ Map<String, String> _currencyCountryList = {'EUR': 'eu',
   'CZK': 'cz',
   'DKK': 'dk',
   'GBP': 'gb',
-  'HUF' :	'hu',
-  'PLN' :	'pl',
-  'RON' :	'ro',
-  'SEK' :	'se',
-  'CHF' :	'ch',
-  'ISK' :	'is',
-  'NOK' :	'no',
-  'HRK' :	'hr',
-  'RUB' :	'ru',
-  'TRY' :	'tr',
-  'AUD' :	'au',
-  'BRL': 	'br',
-  'CAD': 	'ca',
-  'CNY' :  'cn',
-  'HKD'  : 'hk',
-  'IDR'  : 'id',
-  'ILS' :	'il',
-  'INR' :	'in',
-  'KRW' : 'kr',
-  'MXN' :	'mx',
-  'MYR' :	'my',
-  'NZD' :	'nz',
-  'PHP' :	'ph',
-  'SGD' :	'sg',
-  'THB' :	'th',
-  'ZAR': 	'za'
+  'HUF': 'hu',
+  'PLN': 'pl',
+  'RON': 'ro',
+  'SEK': 'se',
+  'CHF': 'ch',
+  'ISK': 'is',
+  'NOK': 'no',
+  'HRK': 'hr',
+  'RUB': 'ru',
+  'TRY': 'tr',
+  'AUD': 'au',
+  'BRL': 'br',
+  'CAD': 'ca',
+  'CNY': 'cn',
+  'HKD': 'hk',
+  'IDR': 'id',
+  'ILS': 'il',
+  'INR': 'in',
+  'KRW': 'kr',
+  'MXN': 'mx',
+  'MYR': 'my',
+  'NZD': 'nz',
+  'PHP': 'ph',
+  'SGD': 'sg',
+  'THB': 'th',
+  'ZAR': 'za'
 };
-
 
 // Public methods
 Map<String,String> getCurrencyList(){
@@ -311,7 +310,7 @@ setTodaysRatesList(baseCurrency){
 String getExchangeRateLastUpdate(){
   // format date
   DateTime time = _exchangeRateLastUpdate;
-  var formatter = new DateFormat("dd/MM/yyyy, HH:mm:ss");
+  var formatter = DateFormat("dd/MM/yyyy, HH:mm:ss");
   String formattedDate = formatter.format(time);
   return formattedDate;
 }
